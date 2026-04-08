@@ -14,7 +14,7 @@
 
 ```bash
 # 1. Unzip the project and enter the folder
-cd interactive-calendar/calendar-app
+cd chronicle-calendar/calendar-app
 
 # 2. Install dependencies (only needed once)
 npm install

@@ -15,6 +15,7 @@ export default function CalendarGrid({
   const today = new Date();
   const daysInMonth = getDaysInMonth(year, month);
   const firstDay = getFirstDayOfMonth(year, month);
+  const lastTouchedDay = useRef(null);
 
   // ── Drag state (refs to avoid re-render overhead) ─────────────────────────
   const isDragging = useRef(false);
@@ -40,6 +41,49 @@ export default function CalendarGrid({
       start <= end ? end : start
     );
   }, [year, month]); // eslint-disable-line
+  
+  const handleTouchMove = useCallback((e) => {
+    if (!isDragging.current) return;
+    
+
+    const touch = e.touches[0];
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (!el) return;
+
+    const day = parseInt(el.getAttribute("data-day"));
+    if (!day || isNaN(day)) return;
+
+    lastTouchedDay.current = day;
+
+    const start = dateOf(dragStartDay.current);
+    const end = dateOf(day);
+    onRangeChange(
+      start <= end ? start : end,
+      start <= end ? end : start
+    );
+  }, [year, month]); // eslint-disable-line
+
+  const handleTouchEnd = useCallback(() => {
+    if (!isDragging.current) return;
+    isDragging.current = false;
+
+    const startDay = dragStartDay.current;
+    const endDay = lastTouchedDay.current || startDay; // 👈 use where finger lifted
+
+    const start = dateOf(startDay);
+    const end = dateOf(endDay);
+
+    if (startDay === endDay) {
+      onRangeChange(start, null); // single tap
+    } else {
+      onRangeChange(
+        start <= end ? start : end,
+        start <= end ? end : start
+      );
+    }
+  }, [year, month]); // eslint-disable-line
+
+
 
   const handlePointerUp = useCallback((day) => {
     if (!isDragging.current) return;
@@ -102,6 +146,7 @@ export default function CalendarGrid({
       <div
         className="cal-days"
         onMouseLeave={() => { isDragging.current = false; }}
+        onTouchMove={handleTouchMove}
       >
         {cells.map((day, i) => {
           if (!day) return <div key={`e-${i}`} className="cal-day empty" />;
@@ -112,6 +157,7 @@ export default function CalendarGrid({
             <div
               key={day}
               className={getDayClasses(day)}
+              data-day={day}
               title={holiday || undefined}
               /* Drag/click handlers */
               onMouseDown={() => handlePointerDown(day)}
@@ -119,7 +165,7 @@ export default function CalendarGrid({
               onMouseUp={() => handlePointerUp(day)}
               /* Touch support */
               onTouchStart={() => handlePointerDown(day)}
-              onTouchEnd={() => handlePointerUp(day)}
+              onTouchEnd={handleTouchEnd}
               /* Keyboard */
               tabIndex={0}
               role="button"
