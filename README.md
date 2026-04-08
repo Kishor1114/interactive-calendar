@@ -13,15 +13,19 @@
 ## 🚀 Running Locally
 
 ```bash
-# 1. Unzip the project and enter the folder
-cd chronicle-calendar/calendar-app
+# 1. Clone the repository
+git clone https://github.com/your-username/interactive-calendar.git
 
-# 2. Install dependencies (only needed once)
+# 2. Navigate into the project
+cd interactive-calendar/calendar-app
+
+# 3. Install dependencies
 npm install
 
-# 3. Start the development server
-npm start
+# 4. Run the project
+npm run dev
 ```
+> Note: If you downloaded the ZIP, the folder name may differ (e.g., interactive-calendar-main).
 
 Opens at **http://localhost:3000** automatically.
 
