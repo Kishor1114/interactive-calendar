@@ -107,4 +107,3 @@ Output goes to the `/build` folder — ready for Netlify / Vercel / GitHub Pages
 
 ---
 
-*Built with care by [Your Name] for the TakeUForward Frontend Engineering Internship Challenge.*
